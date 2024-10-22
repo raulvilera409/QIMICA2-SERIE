@@ -94,22 +94,6 @@
                         <option>JOÃO VICTOR OLIVEIRA SANTOS DE ALMEIDA</option>
                         <option>JOAO VICTOR PAULINO DOS SANTOS</option>
                         <option>JONAS ELIAQUIM CARVALHO BIELLA</option>
-                        <option>JULIA CRISTINI ASSUNCAO DA SILVA</option>
-                        <option>KAUAN COSTA DOS SANTOS</option>
-                        <option>LEANDRO HIROYUKI ROCHA TAGUTI</option>
-                        <option>LETICIA BORGES DE CASTRO</option>
-                        <option>MARCELA ALCANTARA DA SILVA</option>
-                        <option>MARIA EDUARDA RODRIGUES VILLELA DA SILVA</option>
-                        <option>MARIA EDUARDA SILVA FERNANDES</option>
-                        <option>MATHEUS ESTEVAM AGUIAR</option>
-                        <option>MICHAEL PETTER SOARES DE SOUSA</option>
-                        <option>MIGUEL VENANCIO DE BRITO</option>
-                        <option>MIRIA NOBERTO DOS SANTOS</option>
-                        <option>NICOLAS EMANUEL DE OLIVEIRA VILAR</option>
-                        <option>PEDRO HENRIQUE BESSA DOS SANTOS</option>
-                        <option>QUEZIA ZAINE ALVES DA SILVA RAMOS</option>
-                        <option>VITOR RODRIGUES DOS SANTOS ALVES</option>
-                        <option>WESDLEY SENA PAULO JUNIOR</option>
                     </select>
                 </div>
                 <div>
@@ -137,7 +121,7 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzxSrQcbd9k6UNCGmgLYSNIhBB2di2f0Z8ycjqKJVUJizTWUo0Z1SDy3Am1cW5sd_Q/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzhMVximQm7CBO8e1MmhibNZjZtowvh32QSVDuJSPjEWr7Ubq19GbMWrAdhP-mIY_8/exec';
 
         document.getElementById('formulario').addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -150,16 +134,20 @@
                     body: formData,
                 });
 
+                if (!response.ok) {
+                    throw new Error(`Erro na requisição: ${response.statusText}`);
+                }
+
                 const result = await response.json();
                 if (result.result === 'success') {
                     document.getElementById('feedback-content').innerHTML = '<p>Respostas enviadas com sucesso!</p>';
                     document.getElementById('feedback-container').style.display = 'block';
-                    event.target.reset(); // Limpa o formulário após o envio
+                    event.target.reset(); // Limpa o formulário após envio
                 } else {
-                    alert(`Erro: ${result.error}`);
+                    throw new Error(result.message || 'Erro desconhecido.');
                 }
             } catch (error) {
-                alert('Erro ao enviar respostas. Por favor, tente novamente.');
+                alert(`Ocorreu um erro ao enviar as respostas. Detalhes: ${error.message}`);
                 console.error('Erro:', error);
             }
         });
