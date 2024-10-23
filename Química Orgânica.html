@@ -96,6 +96,7 @@
                         <option>JONAS ELIAQUIM CARVALHO BIELLA</option>
                     </select>
                 </div>
+
                 <div>
                     <label for="serie">Série:</label>
                     <select id="serie" name="serie" required>
@@ -105,6 +106,7 @@
                         <option>2ªSÉRIE C</option>
                     </select>
                 </div>
+
                 <div>
                     <label for="data">Data:</label>
                     <input type="date" id="data" name="data" required>
@@ -121,32 +123,39 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzhMVximQm7CBO8e1MmhibNZjZtowvh32QSVDuJSPjEWr7Ubq19GbMWrAdhP-mIY_8/exec';
+        // URL do Google Apps Script (substitua pela URL correta do Web App)
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzxSrQcbd9k6UNCGmgLYSNIhBB2di2f0Z8ycjqKJVUJizTWUo0Z1SDy3Am1cW5sd_Q/exec';
 
+        // Adiciona o listener ao formulário para capturar o evento de 'submit'
         document.getElementById('formulario').addEventListener('submit', async (event) => {
-            event.preventDefault();
+            event.preventDefault(); // Previne o comportamento padrão do envio do formulário
 
-            const formData = new FormData(event.target);
+            const formData = new FormData(event.target); // Coleta os dados do formulário
 
             try {
+                // Envia a requisição POST para o Google Apps Script
                 const response = await fetch(scriptURL, {
                     method: 'POST',
+                    mode: 'cors', // Garante que a requisição siga as regras de CORS
                     body: formData,
                 });
 
-                if (!response.ok) {
+                if (response.ok) {
+                    const result = await response.json(); // Lê a resposta como JSON
+
+                    if (result.result === 'success') {
+                        // Exibe uma mensagem de sucesso e reseta o formulário
+                        document.getElementById('feedback-content').innerHTML = '<p>Respostas enviadas com sucesso!</p>';
+                        document.getElementById('feedback-container').style.display = 'block';
+                        event.target.reset(); // Limpa o formulário após envio
+                    } else {
+                        throw new Error(result.message || 'Erro desconhecido.');
+                    }
+                } else {
                     throw new Error(`Erro na requisição: ${response.statusText}`);
                 }
-
-                const result = await response.json();
-                if (result.result === 'success') {
-                    document.getElementById('feedback-content').innerHTML = '<p>Respostas enviadas com sucesso!</p>';
-                    document.getElementById('feedback-container').style.display = 'block';
-                    event.target.reset(); // Limpa o formulário após envio
-                } else {
-                    throw new Error(result.message || 'Erro desconhecido.');
-                }
             } catch (error) {
+                // Exibe uma mensagem de erro e loga no console para depuração
                 alert(`Ocorreu um erro ao enviar as respostas. Detalhes: ${error.message}`);
                 console.error('Erro:', error);
             }
